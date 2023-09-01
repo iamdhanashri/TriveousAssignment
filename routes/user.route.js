@@ -1,9 +1,9 @@
 
 const express = require('express');
-const { UserModel } = require("../model/User.model");
 const userRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
+const { UserModel } = require('../models/user.model');
 
 userRouter.post("/register", async (req, res) => {
     const { name, email, password,role } = req.body

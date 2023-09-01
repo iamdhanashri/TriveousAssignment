@@ -26,6 +26,26 @@ num start
 
 ## API Documentation
 
+### User Endpoints
+
+#### Create User
+
+```http
+POST /user/register
+```
+
+Create a new user.
+
+
+#### User Login
+
+```http
+POST /user/login
+```
+
+User login.
+
+
 ### Cart Endpoints
 
 #### Get User's Cart
@@ -115,28 +135,6 @@ DELETE /product/delete/${id}
 
 Delete a product by its ID.
 
-### User Endpoints
-
-#### Create User
-
-```http
-POST /user/register
-```
-
-Create a new user.
-
-
-#### User Login
-
-```http
-POST /user/login
-```
-
-User login.
-
-
-
-
 
 
 #### Add Order
@@ -165,8 +163,3 @@ GET /cart/${id}
 ```
 
 Get order details by its ID.
-
-| Parameter   | Type     | Description            |
-| :---------- | :------- | :--------------------- |
-| `id`        | `string` | **Required**. Order ID |
-| `Token` | `string` | **Required**. User's JWT token     |

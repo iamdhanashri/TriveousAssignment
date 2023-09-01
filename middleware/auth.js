@@ -1,25 +1,31 @@
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken")
 
-export const authenticate = async (req, res, next) => {
-  try {
-    const token = req.headers?.authorization?.split(" ")[1];
+const authenticate = (req, res, next) => {
 
-    if (!token) {
-      return res.status(401).send({ message: "You are not logged in" });
+    const token = req.headers.authorization
+
+    if (token) {
+        jwt.verify(token, "masai", (err, decoded) => {
+            if (decoded) {
+                // console.log(decoded)
+                req.body.user = decoded.userID
+
+                next()
+
+            }
+            else {
+                res.send({ msg: "Please Login" })
+            }
+        })
+    }
+    else {
+        res.send({ msg: "Please Login" })
+
     }
 
-    const decoded = jwt.verify(token, "AHIRE");
+}
 
-    if (!decoded) {
-      return res.status(401).send({ message: "You are not authenticated" });
-    }
-    req.body.userId = decoded.userId;
-    req.body.role = decoded.role;
-    req.body.name = decoded.name;
-    next();
-  } catch (error) {
-    res
-      .status(401)
-      .send({ message: "Something went wrong please try again authenticate" });
-  }
-};
+
+module.exports = {
+    authenticate
+}
