@@ -8,21 +8,25 @@ const { authenticate } = require("../middleware/auth");
 orderRouter.post("/", authenticate, async (req, res) => {
   try {
     const { products } = req.body;
-    const userId = req.user._id;
+    const userId =  req.body.userId;
 
     let totalAmount = 0;
-    for (const { product, quantity } of products) {
-      const productDetail = await ProductModel.findById(product);
+    // for (const { product, quantity } of products[0]) {
+      const { productId, quantity } = products[0]
+      const productDetail = await ProductModel.findById(productId);
+  
+
+
       if (!productDetail) {
         return res
           .status(404)
           .send({ message: `Product not found` });
       }
       totalAmount += productDetail.price * quantity;
-    }
+    // } 
 
     const order = new OrderModel({
-      user: userId,
+      userId: userId,
       products,
       totalAmount,
     });
@@ -30,13 +34,13 @@ orderRouter.post("/", authenticate, async (req, res) => {
     const createOrder = await order.save();
     res.status(201).send(createOrder);
   } catch (error) {
-    res.status(500).send({ message: "Error placing order" });
+    res.status(500).send({ message: "Error placing order", msg:error.message });
   }
 });
 
-orderRouter.get("/history", authenticate , async (req, res) => {
+orderRouter.get("/history" , async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.body.userId;
     const orders = await OrderModel.find({ user: userId });
     res.status(200).send(orders);
   } catch (error) {
@@ -60,3 +64,16 @@ orderRouter.get("/:orderId", authenticate, async (req, res) => {
 });
 
 module.exports = {orderRouter};
+
+
+
+// {
+//   "userId":"64f58669833c64d6f2e71f6b",
+//   "products": [
+//   {   
+//     "productId":"64f58a8d833c64d6f2e71f75",
+//       "quantity":1 
+//   }
+//   ],
+//     "totalAmount": 200
+//   }

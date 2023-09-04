@@ -4,10 +4,12 @@ const { UserModel } = require("../models/user.model");
 const { ProductModel } = require("../models/product.model");
 const { authenticate } = require("../middleware/auth");
 
-cartRouter.post("/add", authenticate ,async (req, res) => {
+cartRouter.post("/add" ,async (req, res) => {
   try {
-    const userId = req.user._id;
-    const { productId, quantity } = req.body;
+    // console.log(req.body.userId)
+    const userId = req.body.userId;
+    const { productId, quantity } = req.body.items[0];
+    // console.log(productId)
 
     const user = await UserModel.findById(userId);
     if (!user) {
@@ -19,25 +21,22 @@ cartRouter.post("/add", authenticate ,async (req, res) => {
       return res.status(404).send({ message: "Product not found" });
     }
 
-    const existingCartItem = user.cart.find((item) =>
-      item.product.equals(productId)
-    );
-    if (existingCartItem) {
-      existingCartItem.quantity += quantity;
-    } else {
+    console.log(user)
+    
       user.cart.push({ product: productId, quantity });
-    }
+    
 
     await user.save();
     res.status(201).send({ message: "Product added to cart successfully" });
   } catch (error) {
-    res.status(500).send({ message: "Error adding product to cart" });
+    // console.log(req.user)
+    res.status(500).send({ message: "Error adding product to cart",msg: error.message });
   }
 });
 
-cartRouter.get("/", authenticate, async (req, res) => {
+cartRouter.get("/", async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.body.userId;
     const user = await UserModel.findById(userId).populate("cart.product");
     if (!user) {
       return res.status(404).send({ message: "User not found" });

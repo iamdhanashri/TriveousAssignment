@@ -18,6 +18,7 @@ const userSchema = mongoose.Schema({
     enum: ["seller", "customer"],
     default: "customer",
   },
+  cart:[]
 });
 
 const UserModel = mongoose.model("user", userSchema);
